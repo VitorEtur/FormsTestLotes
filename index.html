@@ -61,27 +61,35 @@
         // Intervalo de células para importar (por exemplo, 'Sheet1!A1:C10')
         var range = 'form!A1:D64';
 
-        // URL da API para buscar os dados
-        var url = 'https://docs.google.com/spreadsheets/d/' + spreadsheetId + '/gviz/tq?tqx=out:json&sheet=' + range;
+        function atualizarTabela() {
+            // URL da API para buscar os dados
+            var url = 'https://docs.google.com/spreadsheets/d/' + spreadsheetId + '/gviz/tq?tqx=out:json&sheet=' + range;
 
-        fetch(url)
-            .then(response => response.text())
-            .then(data => {
-                // Extrai os dados do JSON retornado pela API
-                var json = JSON.parse(data.substr(47).slice(0, -2));
-                var rows = json.table.rows;
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    // Extrai os dados do JSON retornado pela API
+                    var json = JSON.parse(data.substr(47).slice(0, -2));
+                    var rows = json.table.rows;
 
-                var tableBody = document.getElementById('dadosPlanilhaBody');
+                    var tableBody = document.getElementById('dadosPlanilhaBody');
 
-                rows.forEach(function (row) {
-                    var newRow = tableBody.insertRow();
+                    // Limpar o conteúdo atual da tabela
+                    tableBody.innerHTML = '';
 
-                    row.c.forEach(function (cell) {
-                        var newCell = newRow.insertCell();
-                        newCell.textContent = cell.v;
+                    rows.forEach(function (row) {
+                        var newRow = tableBody.insertRow();
+
+                        row.c.forEach(function (cell) {
+                            var newCell = newRow.insertCell();
+                            newCell.textContent = cell.v;
+                        });
                     });
                 });
-            });
+        }
+
+        // Atualizar a tabela a cada 5 segundos (5000 milissegundos)
+        setInterval(atualizarTabela, 0);
     </script>
 
 
