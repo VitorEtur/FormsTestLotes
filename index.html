@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets API</title>
+</head>
+<body>
+    
+    <form action="https://api.sheetmonkey.io/form/hwKetmLpR6sFoC84cEXmXH" method="post">
+        <!-- Put HTML input fields in here and see how they fill up your sheet -->
+        <label>LOTE: <input type="number" name="LOTE" required /></label>
+        <label>QTDS: <input type="number" name="QTDS" required /></label>
+        <label>CLUBE: <input type="text" name="CLUBE" required /></label>
+        <input type="hidden" name="CRIADO" value="x-sheetmonkey-current-date-time" />
+        <input type="submit" value="Submit" />
+    </form>
+
+    <table id="dadosPlanilha">
+        <thead>
+            <tr>
+                <th>LOTE</th>
+                <th>QTDS</th>
+                <th>CLUBE</th>
+                <th>CRIADO</th>
+                
+            </tr>
+        </thead>
+        <tbody id="dadosPlanilhaBody"></tbody>
+    </table>
+
+    <script>
+        // ID da planilha do Google Sheets
+        var spreadsheetId = '17RRasvJ9Z-7yAy3G6XYQu40l2i17aCgoO94sDCAoDvI';
+
+        // Intervalo de células para importar (por exemplo, 'Sheet1!A1:C10')
+        var range = 'form!A1:D64';
+
+        // URL da API para buscar os dados
+        var url = 'https://docs.google.com/spreadsheets/d/' + spreadsheetId + '/gviz/tq?tqx=out:json&sheet=' + range;
+
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // Extrai os dados do JSON retornado pela API
+                var json = JSON.parse(data.substr(47).slice(0, -2));
+                var rows = json.table.rows;
+
+                var tableBody = document.getElementById('dadosPlanilhaBody');
+
+                rows.forEach(function (row) {
+                    var newRow = tableBody.insertRow();
+
+                    row.c.forEach(function (cell) {
+                        var newCell = newRow.insertCell();
+                        newCell.textContent = cell.v;
+                    });
+                });
+            });
+    </script>
+
+
+</body>
+</html>
