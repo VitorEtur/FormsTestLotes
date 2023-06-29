@@ -4,4 +4,4 @@ API que conecta o site com a Planilha do Google adicionando itens nas células e
 (Em desenvolvimento - falta CSS)
 
 
-https://vitoretur.github.io/FormsTestLotes/
+https://vitoretur.github.io/FormsTestLotes/formttest.html
