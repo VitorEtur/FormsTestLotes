@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets API</title>
+</head>
+
+<style>
+
+    form {
+        margin: 0.5rem 0 0.5rem 0;
+        padding: 1rem;
+    }
+
+    body {
+        display: grid;
+        text-align: center;
+        align-content: center;
+        justify-content: center;
+    }
+
+    table {
+        margin-top: 1rem;
+        /* border: 1px solid #000; */
+    }
+
+    td {
+        border: 1px solid #3e4446;
+        padding: 5px;
+        text-transform: uppercase;
+    }
+
+</style>
+<body>
+    
+    <form action="https://api.sheetmonkey.io/form/hwKetmLpR6sFoC84cEXmXH" method="post">
+        <!-- Put HTML input fields in here and see how they fill up your sheet -->
+        <label>LOTE: <input type="text" inputmode="numeric" name="LOTE" required /></label>
+        <label>QTDS: <input type="text" inputmode="numeric" name="QTDS" required /></label>
+        <label>CLUBE: <input type="text" name="CLUBE" required /></label>
+        <input type="hidden" name="CRIADO" value="x-sheetmonkey-current-date-time" />
+        <input type="submit" value="Submit" />
+    </form>
+
+    <table id="dadosPlanilha">
+        <thead>
+            <tr>
+                <th>LOTE</th>
+                <th>QTDS</th>
+                <th>CLUBE</th>
+                <th>CRIADO</th>
+                
+            </tr>
+        </thead>
+        <tbody id="dadosPlanilhaBody"></tbody>
+    </table>
+
+    <script>
+        // ID da planilha do Google Sheets
+        var spreadsheetId = '17RRasvJ9Z-7yAy3G6XYQu40l2i17aCgoO94sDCAoDvI';
+
+        // Intervalo de células para importar (por exemplo, 'Sheet1!A1:C10')
+        var range = 'form!A2:D1066';
+
+        function atualizarTabela() {
+            // URL da API para buscar os dados
+            var url = 'https://docs.google.com/spreadsheets/d/' + spreadsheetId + '/gviz/tq?tqx=out:json&sheet=' + range;
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    // Extrai os dados do JSON retornado pela API
+                    var json = JSON.parse(data.substr(47).slice(0, -2));
+                    var rows = json.table.rows;
+
+                    var tableBody = document.getElementById('dadosPlanilhaBody');
+
+                    // Limpar o conteúdo atual da tabela
+                    tableBody.innerHTML = '';
+
+                    rows.forEach(function (row) {
+                        var newRow = tableBody.insertRow();
+
+                        row.c.forEach(function (cell) {
+                            var newCell = newRow.insertCell();
+                            newCell.textContent = cell.v;
+                        });
+                    });
+                })
+                .catch(error => {
+                    // Captura o erro e trata de forma silenciosa
+                    console.error('Ocorreu um erro ao atualizar a tabela:', error);
+                });
+        }
+
+        // Atualizar a tabela a cada 5 segundos (5000 milissegundos)
+        setInterval(atualizarTabela, 1000);
+    </script>
+
+
+</body>
+</html>
